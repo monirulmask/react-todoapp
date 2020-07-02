@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AddTodo from "./AddTodo";
 
 export default class TodoList extends Component {
   state = {
@@ -26,9 +27,31 @@ export default class TodoList extends Component {
     });
   };
 
+  addToDo = (todo) => {
+    this.setState({
+      todos: [...this.state.todos, todo],
+    });
+  };
+
+  editToDo = (x) => {
+    this.setState((state) => ({
+      todos: state.todos.map((todo) => {
+        if (todo.Id === x.Id) {
+          return {
+            ...todo,
+            Status: todo.Status === "Done" ? "Pending" : "Done",
+          };
+        } else {
+          return todo;
+        }
+      }),
+    }));
+  };
+
   render() {
     return (
       <div>
+        <AddTodo onAdd={this.addToDo}></AddTodo>
         <h1>TodoList </h1>
         <table className="table">
           <thead>
@@ -45,7 +68,9 @@ export default class TodoList extends Component {
                 <tr key={x.Id}>
                   <td>{x.Id}</td>
                   <td>{x.Title}</td>
-                  <td>{x.Status}</td>
+                  <td style={{ color: x.Status === "Done" ? "green" : "red" }}>
+                    {x.Status}
+                  </td>
                   <td>
                     <button
                       className="btn btn-primary"
@@ -56,7 +81,10 @@ export default class TodoList extends Component {
                       </span>
                     </button>
                     &nbsp;
-                    <button className="btn btn-primary">
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => this.editToDo(x)}
+                    >
                       <span>
                         <FontAwesomeIcon icon="edit"></FontAwesomeIcon>
                       </span>
